@@ -1,17 +1,15 @@
-import './globals.css';
-import type { ReactNode } from 'react';
-
+import "./globals.css";
+import type { ReactNode } from "react";
 
 export const metadata = {
-title: 'Gluceel',
-description: 'منصة أسيل لمتابعة سكر الأطفال'
+  title: "Gluceel",
+  description: "منصة أسيل لمتابعة سكر الأطفال"
 };
 
-
 export default function RootLayout({ children }: { children: ReactNode }) {
-return (
-<html lang="ar" dir="rtl">
-<body>{children}</body>
-</html>
-);
+  return (
+    <html lang="ar" dir="rtl">
+      <body>{children}</body>
+    </html>
+  );
 }
