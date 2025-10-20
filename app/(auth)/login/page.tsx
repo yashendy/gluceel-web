@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+
+// نمنع أي محاولة لتوليد Static مسبقًا
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   const router = useRouter();
-  const sp = useSearchParams();
-  const next = sp.get("next") || "";
+
+  // هنجيب ?next= من الـURL يدويًا بدل useSearchParams
+  const [nextUrl, setNextUrl] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const n = new URLSearchParams(window.location.search).get("next") || "";
+      setNextUrl(n);
+    }
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +34,7 @@ export default function LoginPage() {
     setLoading(false);
     if (error) { setError(error.message); return; }
 
+    // اقرأ الدور ووجّه
     const { data: profile } = await sb
       .from("profiles")
       .select("system_role")
@@ -32,7 +43,7 @@ export default function LoginPage() {
 
     const role = (profile?.system_role as "parent" | "doctor" | "admin" | undefined) || "parent";
     const home: Record<string, string> = { parent: "/parent", doctor: "/doctor", admin: "/admin" };
-    router.replace(next || home[role]);
+    router.replace(nextUrl || home[role]);
   };
 
   return (
