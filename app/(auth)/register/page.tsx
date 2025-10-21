@@ -1,87 +1,99 @@
+// app/(auth)/register/page.tsx
 "use client";
 
-import { useState } from "react";
-import { supabaseBrowser } from "@/lib/supabase-browser";
-
-export const dynamic = "force-dynamic";
+import { useState, useTransition } from "react";
+import Link from "next/link";
+import { registerParentAction } from "@/app/actions/auth";
 
 export default function RegisterPage() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [sent, setSent] = useState(false);
+  const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    setOkMsg(null);
 
-    const sb = supabaseBrowser();
-    const { error } = await sb.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } },
+    const formData = new FormData(e.currentTarget);
+
+    startTransition(async () => {
+      const res = await registerParentAction(formData);
+      if (!res.ok) {
+        setError(res.message || "حدث خطأ أثناء إنشاء الحساب");
+      } else {
+        setOkMsg(res.message || "تم إنشاء الحساب بنجاح!");
+      }
     });
-
-    setLoading(false);
-    if (error) setError(error.message);
-    else setSent(true);
-  };
+  }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-gray-100 flex items-center">
-      <div className="container mx-auto px-4">
-        <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
-          <h1 className="text-xl font-semibold mb-4">إنشاء حساب جديد</h1>
+    <>
+      <h1 className="mb-6 text-2xl font-bold text-slate-800">إنشاء حساب وليّ أمر</h1>
 
-          {sent ? (
-            <p className="text-green-700">
-              تم إنشاء الحساب. من فضلك تحقّقي من بريدك الإلكتروني لتفعيل الحساب.
-            </p>
-          ) : (
-            <form onSubmit={onSubmit} className="space-y-4">
-              <input
-                type="text"
-                placeholder="الاسم الكامل"
-                className="w-full rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-
-              <input
-                type="email"
-                placeholder="البريد الإلكتروني"
-                className="w-full rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-
-              <input
-                type="password"
-                placeholder="كلمة المرور"
-                className="w-full rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              {error && <div className="text-red-600 text-sm">{error}</div>}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold py-3 transition"
-              >
-                {loading ? "جارٍ الإنشاء..." : "إنشاء الحساب"}
-              </button>
-            </form>
-          )}
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">الاسم الكامل</label>
+          <input
+            name="full_name"
+            type="text"
+            required
+            placeholder="الاسم كما سيظهر في الملف"
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none ring-sky-200 focus:ring-2"
+          />
         </div>
-      </div>
-    </main>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">البريد الإلكتروني</label>
+          <input
+            name="email"
+            type="email"
+            required
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none ring-sky-200 focus:ring-2"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">كلمة المرور</label>
+          <input
+            name="password"
+            type="password"
+            required
+            minLength={8}
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none ring-sky-200 focus:ring-2"
+          />
+          <p className="mt-1 text-xs text-slate-500">يُفضّل ٨ أحرف على الأقل مع أرقام وحروف.</p>
+        </div>
+
+        {error && <p className="text-sm text-rose-600">{error}</p>}
+        {okMsg && <p className="text-sm text-emerald-600">{okMsg}</p>}
+
+        <button
+          disabled={pending}
+          className="w-full rounded-lg bg-sky-500 px-4 py-2 font-semibold text-white transition hover:bg-sky-600 disabled:opacity-60"
+        >
+          {pending ? "جاري الإنشاء..." : "إنشاء حساب"}
+        </button>
+
+        <div className="mt-3 text-sm">
+          لديك حساب؟{" "}
+          <Link href="/auth/login" className="text-sky-600 hover:underline">
+            تسجيل الدخول
+          </Link>
+        </div>
+      </form>
+
+      <p className="mt-6 text-xs text-slate-500">
+        بالتسجيل أنت توافق على{" "}
+        <Link href="/terms" className="text-sky-600 hover:underline">
+          الشروط
+        </Link>{" "}
+        و{" "}
+        <Link href="/privacy" className="text-sky-600 hover:underline">
+          سياسة الخصوصية
+        </Link>
+        .
+      </p>
+    </>
   );
 }
