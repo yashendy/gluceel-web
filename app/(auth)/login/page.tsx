@@ -95,10 +95,10 @@ export default function LoginPage() {
         </button>
 
         <div className="mt-3 flex items-center justify-between text-sm">
-          <Link href="/auth/forgot" className="text-sky-600 hover:underline">
+          <Link href="/forgot" className="text-sky-600 hover:underline">
             نسيت كلمة المرور؟
           </Link>
-          <Link href="/auth/register" className="text-sky-600 hover:underline">
+          <Link href="/register" className="text-sky-600 hover:underline">
             مستخدم جديد؟ أنشئ حسابًا
           </Link>
         </div>
