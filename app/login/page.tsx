@@ -1,9 +1,9 @@
-'use client';
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
-import { supabaseBrowser } from '@/lib/supabaseBrowser';
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useState } from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+
 
 export default function LoginPage() {
   const supa = supabaseBrowser();
