@@ -1,15 +1,19 @@
-import Link from "next/link";
+import { redirect } from 'next/navigation';
+import { supabaseServer } from '@/lib/supabaseServer';
 
-export default function Home() {
-  return (
-    <main className="container">
-      <div className="card mt-10">
-        <h1 className="text-2xl font-semibold mb-2">Gluceel</h1>
-        <p className="text-sm text-gray-600">ابدأ بتسجيل الدخول.</p>
-        <div className="mt-4 flex gap-3">
-          <Link className="btn btn-primary" href="/login">تسجيل الدخول</Link>
-        </div>
-      </div>
-    </main>
-  );
+export default async function Home() {
+  const supa = supabaseServer();
+  const { data } = await supa.auth.getUser();
+
+  if (!data.user) {
+    redirect('/login');
+  }
+
+  const role = (data.user.user_metadata?.role as string) || 'parent';
+  const roleHome: Record<string, string> = {
+    parent: '/parent',
+    doctor: '/doctor',
+    admin: '/admin',
+  };
+  redirect(roleHome[role] ?? '/parent');
 }
