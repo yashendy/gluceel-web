@@ -1,8 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { supabaseBrowser } from '@/lib/supabaseBrowser';
+"use client";
+import { useState } from "react";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+
 
 export default function NewChild() {
   const router = useRouter();
