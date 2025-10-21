@@ -1,21 +1,26 @@
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/auth-helpers-nextjs';
+// lib/supabase-server.ts
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 
+/**
+ * سيرفر Supabase لقراءة/تحديث الكوكيز عبر السيرفر
+ */
 export function supabaseServer() {
   const cookieStore = cookies();
+
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
+        get(name) {
           return cookieStore.get(name)?.value;
         },
         set(name, value, options) {
           cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          cookieStore.set({ name, value: '', ...options, maxAge: 0 });
+          cookieStore.delete({ name, ...options });
         },
       },
     }
