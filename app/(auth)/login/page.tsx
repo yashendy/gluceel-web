@@ -1,122 +1,108 @@
+// app/(auth)/login/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { supabaseBrowser } from "@/lib/supabase-browser";
-
-export const dynamic = "force-dynamic";
+import { signInWithPasswordAction } from "@/app/actions/auth";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [nextUrl, setNextUrl] = useState("");
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const n = new URLSearchParams(window.location.search).get("next") || "";
-      setNextUrl(n);
-    }
-  }, []);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
+  const supabase = createClientComponentClient();
 
-  const onSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    const formData = new FormData(e.currentTarget);
 
-    const sb = supabaseBrowser();
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
-    }
+    startTransition(async () => {
+      const res = await signInWithPasswordAction(formData);
+      if (!res.ok) {
+        setError(res.message || "حدث خطأ أثناء تسجيل الدخول");
+      } else {
+        window.location.href = "/"; // أو لوحة ولي الأمر /dashboard
+      }
+    });
+  }
 
-    // اقرأ الدور ووجّه على الصفحة المناسبة
-    const { data: profile } = await sb
-      .from("profiles")
-      .select("system_role")
-      .eq("id", data.user?.id)
-      .single();
-
-    const role = (profile?.system_role as "parent" | "doctor" | "admin" | undefined) || "parent";
-    const home: Record<string, string> = { parent: "/parent", doctor: "/doctor", admin: "/admin" };
-    router.replace(nextUrl || home[role]);
-  };
+  async function signInWithGoogle() {
+    setError(null);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
+    if (error) setError(error.message);
+    if (data?.url) window.location.href = data.url;
+  }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-gray-100 flex items-center">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col-reverse md:flex-row items-center gap-10 md:gap-16">
+    <>
+      <h1 className="mb-6 text-2xl font-bold text-slate-800">تسجيل الدخول</h1>
 
-          {/* العمود الأيسر: لوجو ورسالة (ستايل شبيه فيسبوك) */}
-          <div className="md:w-1/2 text-center md:text-right">
-            <div className="text-4xl md:text-5xl font-extrabold text-blue-600">Gluceel</div>
-            <p className="mt-4 text-gray-700 text-lg md:text-xl leading-relaxed">
-              منصة أسيل لمتابعة سكر الأطفال وضبط الوجبات —
-              عناية أسرية دافئة 💙
-            </p>
-          </div>
-
-          {/* العمود الأيمن: كارت تسجيل الدخول */}
-          <div className="md:w-1/2 w-full max-w-md mx-auto">
-            <div className="bg-white rounded-2xl shadow p-6 md:p-7">
-              <form onSubmit={onSubmit} className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="البريد الإلكتروني"
-                  className="w-full rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="كلمة المرور"
-                  className="w-full rounded-xl border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-
-                {error && <div className="text-red-600 text-sm">{error}</div>}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 transition"
-                >
-                  {loading ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
-                </button>
-
-                <div className="text-center">
-                  <Link
-                    href="/reset"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    نسيت كلمة المرور؟
-                  </Link>
-                </div>
-              </form>
-
-              <div className="h-px bg-gray-200 my-4" />
-
-              <div className="text-center">
-                <Link
-                  href="/register"
-                  className="inline-block rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6"
-                >
-                  إنشاء حساب جديد
-                </Link>
-              </div>
-            </div>
-          </div>
-
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">البريد الإلكتروني</label>
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="example@email.com"
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none ring-sky-200 focus:ring-2"
+          />
         </div>
-      </div>
-    </main>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">كلمة المرور</label>
+          <div className="relative">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 pr-10 outline-none ring-sky-200 focus:ring-2"
+            />
+            <button
+              type="button"
+              className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-slate-500 hover:text-slate-700"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label="إظهار/إخفاء كلمة المرور"
+            >
+              {showPassword ? "إخفاء" : "إظهار"}
+            </button>
+          </div>
+        </div>
+
+        {error && <p className="text-sm text-rose-600">{error}</p>}
+
+        <button
+          disabled={pending}
+          className="w-full rounded-lg bg-sky-500 px-4 py-2 font-semibold text-white transition hover:bg-sky-600 disabled:opacity-60"
+        >
+          {pending ? "جاري الدخول..." : "دخول"}
+        </button>
+
+        <div className="my-2 text-center text-sm text-slate-500">أو</div>
+
+        <button
+          type="button"
+          onClick={signInWithGoogle}
+          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold hover:bg-slate-50"
+        >
+          الدخول بحساب Google
+        </button>
+
+        <div className="mt-3 flex items-center justify-between text-sm">
+          <Link href="/auth/forgot" className="text-sky-600 hover:underline">
+            نسيت كلمة المرور؟
+          </Link>
+          <Link href="/auth/register" className="text-sky-600 hover:underline">
+            مستخدم جديد؟ أنشئ حسابًا
+          </Link>
+        </div>
+      </form>
+    </>
   );
 }
