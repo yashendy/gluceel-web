@@ -1,6 +1,6 @@
-import Header from '@/components/Header';
-import { redirect } from 'next/navigation';
-import { supabaseServer } from '@/lib/supabaseServer';
+import Header from "@/components/Header";
+import { supabaseServer } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const supa = supabaseServer();
