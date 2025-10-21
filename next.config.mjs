@@ -1,6 +1,4 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  experimental: { serverActions: { allowedOrigins: ["*"] } },
-};
-export default nextConfig;
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+/* NOTE: This file should not be edited */
