@@ -1,3 +1,5 @@
+docs: adopt db-schema v1.2 (tables, fields, indexes, rls notes)
+
 [[BEGIN]]
 
 gluceel-web — db-schema (v1.2)
