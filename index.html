@@ -25,30 +25,72 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="logo">
-      <img src="logo.png" alt="">
-      <h1>منصة متابعة سكر الأطفال</h1>
-    </div>
-    <p class="muted">سجّل دخولك بحسابك. لو نسيت كلمة المرور تقدر تستعيدها من الرابط بالأسفل.</p>
-
-    <form id="formLogin">
-      <label for="email">البريد الإلكتروني</label>
-      <input id="email" type="email" class="input" placeholder="example@mail.com" required>
-
-      <label for="password">كلمة المرور</label>
-      <input id="password" type="password" class="input" required>
-
-      <button id="btnSubmit" class="btn" type="submit">دخول</button>
-
-      <div id="msg" class="msg info"></div>
-
-      <div class="links">
-        <a href="register.html">إنشاء حساب جديد</a>
-        <a href="forgot.html">نسيت كلمة المرور؟</a>
+  
+     <main class="container auth-layout">
+    <!-- Right (identity) visually, but DOM order can be flexible in RTL -->
+    <section class="auth-right">
+      <div class="brand">
+        <img src="../assets/gluceel-logo.png" alt="شعار جلوسيل Gluceel">
+        <div class="name">جلوسيل | Gluceel – منصة السكر للأطفال</div>
       </div>
-    </form>
-  </div>
+      <div class="tagline">معًا نطّمن على سكر أطفالنا… خطوة بخطوة.</div>
+
+      <div class="bullets">
+        <div class="bullet"><span class="icon">1</span> <div><strong>كل رقم له معنى:</strong> رسومات بسيطة تشرح القراءات.</div></div>
+        <div class="bullet"><span class="icon">2</span> <div><strong>أفكار لذيذة ومفيدة:</strong> اقتراحات حسب العمر والحساسية والهدف اليومي.</div></div>
+        <div class="bullet"><span class="icon">3</span> <div><strong>حركة بفرحة:</strong> تحديات صغيرة وشارات تشجيع.</div></div>
+        <div class="bullet"><span class="icon">4</span> <div><strong>كوب ورا كوب:</strong> تذكيرات مرِنة لشرب المَيّه.</div></div>
+      </div>
+
+      <div class="note">جلوسيل يساعد على المتابعة اليومية ولا يغني عن استشارة الطبيب.</div>
+
+      <div class="hero" aria-hidden="true">
+        <img src="../assets/hero-child-running.png" alt="رسم لطفل يركض ممسكًا بزجاجة ماء مع عناصر صحية ودودة">
+      </div>
+    </section>
+
+    <!-- Left (login card) -->
+    <section class="auth-left">
+      <div class="card">
+        <h1 class="center" style="margin-top:0;margin-bottom:12px;">أهلًا بيك 👋 يلا نتابع سوا</h1>
+        <form class="form-grid" action="#" method="post" novalidate>
+          <label class="label" for="email">البريد الإلكتروني أو رقم الجوال</label>
+          <input class="input" id="email" name="email" type="text" inputmode="email" autocomplete="username" placeholder="example@mail.com أو ‎+965 5XXXXXXX" required>
+
+          <label class="label" for="password">كلمة المرور</label>
+          <input class="input" id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+
+          <div class="links small">
+            <label style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" style="accent-color: var(--primary); width:18px; height:18px;">
+              تذكّرني على هذا الجهاز
+            </label>
+            <a href="#" class="muted">نسيت كلمة السر؟ ولا يهمك!</a>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+            <div class="hr"><span>أو</span></div>
+            <a href="#" class="btn btn-secondary" role="button">ابدئي رحلة المتابعة – إنشاء حساب</a>
+          </div>
+
+          <p class="legal small center">بدخولك/تسجيلك فأنت موافق على <a href="#">الشروط</a> و<a href="#">سياسة الخصوصية</a>. كل بياناتك محفوظة عندنا بأمان.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>© <span id="year"></span> جلوسيل | Gluceel — معكم يومًا بيوم.</span>
+    <a href="#">الشروط</a>
+    <a href="#">الخصوصية</a>
+    <a href="#">المساعدة</a>
+    <span>الدعم: support@gluceel.com</span>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
 
   
