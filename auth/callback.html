@@ -1,8 +1,37 @@
-<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><link rel='stylesheet' href='../css/base.css'/><title>جاري المعالجة — جلوسيل</title></head><body>
-<header class="header"><div class="header-inner container"><div class="logo"><img src="../assets/gluceel-logo.png" onerror="this.src='../assets/favicon.svg'"/><strong>جلوسيل</strong></div><div class="inline"><span id="connStatus" class="badge">📶 متصل</span><a class="btn ghost" href="#" onclick="App.toggleLocale()"><span id="langLabel">AR</span>/<span>EN</span></a><div id="userMenu"></div></div></div></header>
-<main class='container'><div class='card'><h3>جاري التحقق من الجلسة…</h3><p id='cb'></p></div></main>
-<footer class="footer"><div class="footer-inner container small"><span>© 2025 Gluceel</span><div class="inline"><a href="../pages/emergency.html">الطوارئ</a><a href="../pages/help.html">المساعدة</a><a href="../pages/education.html">التوعية</a><a href="../pages/user-settings.html">إعدادات</a></div></div></footer>
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><link rel='stylesheet' href='../css/base.css'/><title>Gluceel</title></head><body>
+<header class="header">
+  <div class="header-inner container">
+    <div class="logo">
+      <img src="../assets/gluceel-logo.png" alt="Gluceel Logo" onerror="this.src='../assets/favicon.svg'"/>
+      <strong>جلوسيل</strong>
+    </div>
+    <div class="inline">
+      <span id="connStatus" class="badge">📶 متصل</span>
+      <a class="btn ghost" href="#" onclick="App.toggleLocale()"><span id="langLabel">AR</span>/<span>EN</span></a>
+      <div id="userMenu"></div>
+    </div>
+  </div>
+</header>
+<main class='container'>
+<div class='card'><h3>جاري التحقق من الجلسة…</h3><p id='cb'></p></div>
+<script>Auth.handleCallback()</script>
+</main>
+<footer class="footer">
+  <div class="footer-inner container small">
+    <span>© 2025 Gluceel</span>
+    <div class="inline">
+      <a href="../pages/emergency.html">الطوارئ</a>
+      <a href="../pages/help.html">المساعدة</a>
+      <a href="../pages/education.html">التوعية</a>
+      <a href="../pages/user-settings.html">إعدادات</a>
+    </div>
+  </div>
+</footer>
 <div class="toast card" id="toast"></div>
-<script src="../js/app.config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/modules/state.js"></script><script src="../js/modules/ui.js"></script><script src="../js/modules/api.js"></script><script src="../js/modules/pwa.js"></script>
-<script src='../js/modules/auth.js'></script><script>Auth.handleCallback()</script>
-</body></html>
+<script src="../js/app.config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/modules/state.js"></script>
+<script src="../js/modules/ui.js"></script>
+<script src="../js/modules/api.js"></script>
+<script src="../js/modules/pwa.js"></script>
+<script src='../js/modules/auth.js'></script></body></html>
