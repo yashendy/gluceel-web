@@ -1,1 +1,0 @@
-window.Targets={async save(){UI.toast('تم حفظ الأهداف (واجهة فقط)');}};
