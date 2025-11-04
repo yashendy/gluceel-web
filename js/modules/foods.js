@@ -1,0 +1,1 @@
+window.Foods={search(q){/* TODO: bind foods */}};
