@@ -1,0 +1,13 @@
+{
+  "name": "Gluceel",
+  "short_name": "Gluceel",
+  "start_url": "/gluceel-web/",
+  "display": "standalone",
+  "background_color": "#f7fafc",
+  "theme_color": "#1e88e5",
+  "icons": [
+    { "src": "assets/favicon.svg", "sizes": "64x64", "type": "image/svg+xml" }
+  ],
+  "dir": "rtl",
+  "lang": "ar"
+}
