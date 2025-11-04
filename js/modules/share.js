@@ -1,0 +1,1 @@
+window.Share={create(){UI.toast('تم إنشاء كود (واجهة فقط)');}};
