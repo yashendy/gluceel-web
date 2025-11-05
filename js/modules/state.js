@@ -24,7 +24,7 @@ window.App = {
           .eq("user_id", uid)
           .maybeSingle();
         this.profile = { role: data?.role || "guardian" };
-      } catch (e) {
+      } catch {
         this.profile = { role: "guardian" };
       }
     }
@@ -35,7 +35,7 @@ window.App = {
     this.locale = this.locale === "ar" ? "en" : "ar";
     localStorage.setItem("locale", this.locale);
     const el = document.getElementById("langLabel");
-    if (el) el.innerText = this.locale.toUpperCase(); // ← بدون Optional chaining على اليسار
+    if (el) el.innerText = this.locale.toUpperCase(); // بدون ?. على يسار =
   },
 
   setLocale(loc) {
