@@ -4,6 +4,9 @@ window.Dashboard = {
     const childId = p.get('child');
     if (!childId) return;
 
+    // وحدة الطفل الفعّالة
+    App.childUnitOverride = await API.getEffectiveUnit(childId);
+
     const { data: sum } = await API.getSummary(childId);
     const get = (d) => sum?.find(x => x.period_days === d);
 
@@ -16,7 +19,8 @@ window.Dashboard = {
 
     const { data: meas } = await API.listMeasurements(childId,1);
     const last = document.getElementById('lastG');
-    if (last) last.innerText = meas?.[0]?.glucose_mgdl ?? '--';
+    const unit = Units.label();
+    if (last) last.innerText = (meas && meas[0]) ? `${Units.toDisplay(meas[0].glucose_mgdl || meas[0].value)} ${unit}` : '--';
   }
 };
 document.addEventListener('DOMContentLoaded',()=>Dashboard.load());
