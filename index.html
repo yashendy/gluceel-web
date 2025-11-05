@@ -9,7 +9,6 @@
   <title>جلوسيل — متابعة سكر الأطفال بسهولة</title>
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="header-inner container">
       <div class="logo">
@@ -26,14 +25,11 @@
     </div>
   </header>
 
-  <!-- Main -->
   <main class="container">
     <div class="grid cols-2">
-      <!-- Promo card -->
+      <!-- البطاقة التعريفية -->
       <div class="card">
-        <div class="hero">
-          <img src="assets/hero-child-running.png" alt="طفل سعيد يركض"/>
-        </div>
+        <div class="hero"><img src="assets/hero-child-running.png" alt="طفل سعيد يركض"/></div>
         <h2>جلوسيل — أسهل متابعة لسكر طفلك</h2>
         <ul>
           <li>تسجيل القياسات قبل/بعد الوجبات بسرعة.</li>
@@ -44,9 +40,8 @@
         <button class="btn" onclick="document.getElementById('tabSignup').click()">ابدأ الآن</button>
       </div>
 
-      <!-- Auth card (login/signup/reset) -->
+      <!-- البطاقة: دخول/تسجيل/نسيت -->
       <div class="card">
-        <!-- Tabs -->
         <div class="inline" style="gap:4px;margin-bottom:12px">
           <button id="tabLogin"  class="btn ghost" onclick="UI.showAuthTab('login')">تسجيل الدخول</button>
           <button id="tabSignup" class="btn ghost" onclick="UI.showAuthTab('signup')">إنشاء حساب</button>
@@ -55,10 +50,7 @@
 
         <!-- Login -->
         <div id="authLogin" style="display:none">
-          <div class="input">
-            <label>البريد الإلكتروني</label>
-            <input id="loginEmail" type="email"/>
-          </div>
+          <div class="input"><label>البريد الإلكتروني</label><input id="loginEmail" type="email"/></div>
           <div class="input">
             <label>كلمة المرور</label>
             <div class="inline" style="width:100%">
@@ -76,10 +68,7 @@
 
         <!-- Signup -->
         <div id="authSignup" style="display:none">
-          <div class="input">
-            <label>البريد الإلكتروني</label>
-            <input id="signupEmail" type="email"/>
-          </div>
+          <div class="input"><label>البريد الإلكتروني</label><input id="signupEmail" type="email"/></div>
           <div class="input">
             <label>كلمة المرور</label>
             <div class="inline" style="width:100%">
@@ -87,16 +76,14 @@
               <button class="btn ghost" onclick="UI.togglePass('signupPass')">👁</button>
             </div>
           </div>
-          <div class="input">
-            <label>الدور</label>
+          <div class="input"><label>الدور</label>
             <select id="signupRole">
               <option value="guardian">وليّ أمر</option>
               <option value="doctor">طبيب</option>
             </select>
           </div>
           <div class="input" id="doctorCodeRow" style="display:none">
-            <label>كود الطبيب (اختياري)</label>
-            <input id="doctorCode"/>
+            <label>كود الطبيب (اختياري)</label><input id="doctorCode"/>
           </div>
           <div class="inline" style="justify-content:space-between">
             <button class="btn ghost" onclick="UI.showAuthTab('login')">عندي حساب؟</button>
@@ -108,10 +95,7 @@
 
         <!-- Reset -->
         <div id="authReset" style="display:none">
-          <div class="input">
-            <label>البريد الإلكتروني</label>
-            <input id="resetEmail" type="email"/>
-          </div>
+          <div class="input"><label>البريد الإلكتروني</label><input id="resetEmail" type="email"/></div>
           <div class="inline" style="justify-content:space-between">
             <button class="btn ghost" onclick="UI.showAuthTab('login')">رجوع للدخول</button>
             <span class="small">سيتم إرسال رابط لإعادة تعيين كلمة المرور</span>
@@ -123,7 +107,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner container small">
       <span>© 2025 Gluceel</span>
@@ -135,19 +118,17 @@
     </div>
   </footer>
 
-  <!-- Toast -->
   <div class="toast card" id="toast"></div>
 
-  <!-- Scripts (ترتيب التحميل مهم) -->
+  <!-- ترتيب السكربتات الصحيح -->
   <script src="js/app.config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/modules/state.js"></script>
   <script src="js/modules/ui.js"></script>
   <script src="js/modules/api.js"></script>
+  <script src="js/modules/state.js"></script>
   <script src="js/modules/auth.js"></script>
   <script src="js/modules/pwa.js"></script>
 
-  <!-- افتح على تبويب تسجيل الدخول افتراضيًا -->
   <script>UI.showAuthTab('login');</script>
 </body>
 </html>
