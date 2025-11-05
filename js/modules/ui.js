@@ -13,7 +13,7 @@ window.UI = {
     el.type = el.type === "password" ? "text" : "password";
   },
 
-  // يدعم login / signup / reset في نفس البطاقة
+  // login / signup / reset داخل نفس البطاقة
   showAuthTab(tab) {
     const L = document.getElementById("authLogin");
     const S = document.getElementById("authSignup");
@@ -23,11 +23,11 @@ window.UI = {
     if (S) S.style.display = tab === "signup" ? "block" : "none";
     if (R) R.style.display = tab === "reset"  ? "block" : "none";
 
-    // إظهار صف كود الطبيب فقط في signup
+    // صف كود الطبيب يظهر فقط في signup
     const codeRow = document.getElementById("doctorCodeRow");
     if (codeRow) codeRow.style.display = tab === "signup" ? "block" : "none";
 
-    // إبراز الزر النشط (اختياري)
+    // تمييز التبويب النشط (اختياري)
     const active = { login: "tabLogin", signup: "tabSignup", reset: "tabReset" }[tab];
     ["tabLogin", "tabSignup", "tabReset"].forEach((id) => {
       const b = document.getElementById(id);
