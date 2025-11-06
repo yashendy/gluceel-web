@@ -35,10 +35,16 @@ window.API = {
     const t=this.tables.children, c=this.cols.children;
     return await this.sb().from(t).select(`${c.id}, ${c.name}`).order(c.name);
   },
-  async addChild(payload){
-    const t=this.tables.children;
-    return await this.sb().from(t).insert(payload).select().single();
-  },
+ async addChild(payload){
+  const name = payload.display_name || payload.name;
+  const unit = document.getElementById("child_unit")?.value
+             || App.userSettings?.unit_glucose
+             || "mg/dL";
+  return await this.sb().rpc("create_child", {
+    p_display_name: name,
+    p_unit_display: unit
+  });
+}
 
   // child_settings: init/update آمن
   async initChildSettings(childId, displayUnit){
