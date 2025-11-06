@@ -3,7 +3,7 @@ window.App = {
   session: null,
   profile: null,
   userSettings: null,
-  childUnitOverride: null, // تُضبط عند فتح صفحات طفل محدد
+  childUnitOverride: null,
   locale: localStorage.getItem("locale") || "ar",
 
   init() {
@@ -31,23 +31,20 @@ window.App = {
         .select([
           p.role, p.full_name, p.phone, p.avatar_url,
           p.onboarding_complete, p.default_child_id,
-          p.preferred_glucose_unit, p.hypo_default, p.hyper_default,
-          p.notify_email, p.notify_push
+          p.emergency_contact_name, p.emergency_contact_phone
         ].join(","))
         .eq(p.user_id, this.session.user.id)
         .maybeSingle();
       this.profile = data || { role: "guardian" };
-    } catch {
-      this.profile = { role: "guardian" };
-    }
+    } catch { this.profile = { role: "guardian" }; }
   },
 
   async loadUserSettings() {
     try {
       const { data } = await API.getUserSettings();
-      this.userSettings = data || { unit_glucose: "mg/dL", locale: "ar", timezone: "Africa/Cairo" };
+      this.userSettings = data || { unit_glucose: "mg/dL", locale: "ar", timezone: "Asia/Kuwait" };
     } catch {
-      this.userSettings = { unit_glucose: "mg/dL", locale: "ar", timezone: "Africa/Cairo" };
+      this.userSettings = { unit_glucose: "mg/dL", locale: "ar", timezone: "Asia/Kuwait" };
     }
   },
 
@@ -58,11 +55,7 @@ window.App = {
     if (el) el.innerText = this.locale.toUpperCase();
   },
 
-  setLocale(loc) {
-    this.locale = loc;
-    localStorage.setItem("locale", loc);
-    location.reload();
-  },
+  setLocale(loc) { this.locale = loc; localStorage.setItem("locale", loc); location.reload(); },
 
   bindConn() {
     const badge = document.getElementById("connStatus");
@@ -76,25 +69,20 @@ window.App = {
 /* ====== Units Helper: mg/dL ⇆ mmol/L ====== */
 window.Units = {
   label() {
-    // أولوية: override للطفل ← user_settings ← profile.preferred_glucose_unit ← mg/dL
-    if (App.childUnitOverride) return App.childUnitOverride;
+    if (App.childUnitOverride) return App.childUnitOverride;                 // وحدة الطفل الفعّالة
     if (App.userSettings?.unit_glucose) return App.userSettings.unit_glucose; // "mg/dL" | "mmol/L"
-    if (App.profile?.preferred_glucose_unit) return App.profile.preferred_glucose_unit;
     return "mg/dL";
   },
   toDisplay(mgdl) {
     if (mgdl == null || Number.isNaN(Number(mgdl))) return "--";
-    const unit = this.label();
-    return unit === "mmol/L" ? (Number(mgdl)/18).toFixed(1) : Math.round(Number(mgdl));
+    return this.label() === "mmol/L" ? (Number(mgdl)/18).toFixed(1) : Math.round(Number(mgdl));
   },
   toMgdl(inputValue) {
     if (inputValue == null || inputValue === "" || Number.isNaN(Number(inputValue))) return null;
-    const unit = this.label();
-    return unit === "mmol/L" ? Math.round(Number(inputValue) * 18) : Math.round(Number(inputValue));
+    return this.label() === "mmol/L" ? Math.round(Number(inputValue) * 18) : Math.round(Number(inputValue));
   },
-  // تحويل عرضي: من "mg/dL" ⇆ "mgdl" (child_settings) والعكس
-  displayToChildUnit(displayUnit) { return displayUnit === "mmol/L" ? "mmol" : "mgdl"; },
-  childToDisplayUnit(childUnit)   { return childUnit === "mmol" ? "mmol/L" : "mg/dL"; }
+  displayToChildUnit(u){ return u === "mmol/L" ? "mmol" : "mgdl"; },
+  childToDisplayUnit(u){ return u === "mmol" ? "mmol/L" : "mg/dL"; }
 };
 
 document.addEventListener("DOMContentLoaded", () => App.init());
