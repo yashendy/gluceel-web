@@ -1,28 +1,113 @@
-window.Children = {
-  async load(){
-    const list = document.getElementById('childrenList');
-    if (!list) return;
-    const { data, error } = await API.listChildren();
-    if (error){
-      list.innerHTML = `<div class='alert'>${error.message}</div>`;
-      return;
-    }
-    if (!data || data.length===0){
-      list.innerHTML = `<div class='alert'>لا يوجد أطفال بعد. اضغطي "إضافة طفل".</div>`;
-      return;
-    }
-    const unitLabel = Units.label();
-    list.innerHTML = data.map(ch => `
-      <div class='card inline' style='justify-content:space-between'>
-        <div>
-          <strong>${ch.display_name || ch.name || 'طفل'}</strong>
-          <div class='small'>الوحدة: ${unitLabel}</div>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="../css/base.css"/>
+  <title>وليّ الأمر — الأطفال</title>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner container">
+      <div class="logo">
+        <img src="../assets/gluceel-logo.png" alt="Gluceel" onerror="this.src='../assets/favicon.svg'"/>
+        <strong>جلوسيل</strong>
+      </div>
+      <div class="inline">
+        <span id="connStatus" class="badge">📶 متصل</span>
+        <a class="btn ghost" href="#" onclick="App.toggleLocale()"><span id="langLabel">AR</span>/<span>EN</span></a>
+        <div id="userMenu"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container grid" style="grid-template-columns:260px 1fr">
+    <aside class="sidebar card">
+      <nav class="nav" id="sideNav"></nav>
+    </aside>
+
+    <section class="grid" style="gap:16px">
+      <!-- بيانات وليّ الأمر -->
+      <div class="card">
+        <h3>بياناتي (وليّ الأمر)</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px">
+          <div class="input"><label>الاسم الكامل</label><input id="g_full_name" placeholder="اسمك"/></div>
+          <div class="input"><label>الهاتف</label><input id="g_phone" placeholder="+2012..."/></div>
+          <div class="input"><label>جهة اتصال الطوارئ</label><input id="g_emg_name" placeholder="اسم"/></div>
+          <div class="input"><label>هاتف الطوارئ</label><input id="g_emg_phone" placeholder="+2012..."/></div>
+          <div class="input"><label>اللغة</label>
+            <select id="g_locale">
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div class="input"><label>المنطقة الزمنية</label>
+            <input id="g_timezone" placeholder="Asia/Kuwait"/>
+          </div>
+          <div class="input inline"><label>إشعارات البريد</label><input id="g_notify_email" type="checkbox"/></div>
+          <div class="input inline"><label>إشعارات الدفع</label><input id="g_notify_push" type="checkbox"/></div>
+          <div class="input"><label>وحدة القياس</label>
+            <select id="g_unit">
+              <option value="mg/dL">mg/dL</option>
+              <option value="mmol/L">mmol/L</option>
+            </select>
+          </div>
         </div>
-        <div class='inline'>
-          <a class='btn' href='${APP_CONFIG.BASE_PATH}pages/dashboard.html?child=${ch.id}'>عرض</a>
+        <div class="inline" style="gap:8px;margin-top:8px">
+          <button class="btn" onclick="Guardian.saveProfile()">حفظ البيانات</button>
+          <button class="btn secondary" onclick="Guardian.saveSettings()">حفظ الإعدادات</button>
+        </div>
+        <div class="small" style="margin-top:6px">الوحدة الحالية للعَرض: <strong id="g_unit_hint">mg/dL</strong></div>
+      </div>
+
+      <!-- إضافة طفل -->
+      <div class="card">
+        <h3>إضافة طفل</h3>
+        <div class="grid" style="grid-template-columns:1fr 200px; gap:12px">
+          <div class="input"><label>اسم الطفل</label><input id="child_name" placeholder="مثال: سليم"/></div>
+          <div class="input"><label>وحدة القياس</label>
+            <select id="child_unit">
+              <option value="mg/dL">mg/dL</option>
+              <option value="mmol/L">mmol/L</option>
+            </select>
+          </div>
+        </div>
+        <div class="inline" style="gap:8px">
+          <button class="btn" onclick="Guardian.addChild()">إضافة</button>
         </div>
       </div>
-    `).join('');
-  }
-};
-document.addEventListener('DOMContentLoaded',()=>Children.load());
+
+      <!-- قائمة الأطفال -->
+      <div class="card">
+        <h3>أطفالي</h3>
+        <div id="childrenList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner container small">
+      <span>© 2025 Gluceel</span>
+      <div class="inline">
+        <a href="./emergency.html">الطوارئ</a>
+        <a href="./help.html">المساعدة</a>
+        <a href="./education.html">التوعية</a>
+      </div>
+    </div>
+  </footer>
+  <div class="toast card" id="toast"></div>
+
+  <!-- ترتيب السكربتات -->
+  <script src="../js/app.config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/modules/ui.js"></script>
+  <script src="../js/modules/api.js"></script>
+  <script src="../js/modules/state.js"></script>
+  <script src="../js/modules/auth.js"></script>
+  <script src="../js/modules/pwa.js"></script>
+
+  <script src="../js/modules/router.js"></script>
+  <script src="../js/modules/guardian.js"></script>
+  <script src="../js/modules/children.js"></script>
+</body>
+</html>
